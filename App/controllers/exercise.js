@@ -3,14 +3,14 @@ const autoBind = require('auto-bind')
 const chalk = require('chalk')
 
 class ExerciseController {
-    constructor(){
+    constructor() {
         autoBind(this)
     }
-    
+
     async createExercise(req, res) {
         try {
             const { description, duration } = req.body
-            const date = req.body.date || new Date().toDateString()
+            const date = req.body.date ? new Date(req.body.date).toDateString() : new Date().toDateString()
             const exercise = await new Exercise({ description, duration, date, user: req.params._id }).save()
             res.json(await this.transformExercise(exercise))
         } catch (error) {
@@ -21,7 +21,7 @@ class ExerciseController {
     async transformExercise(exercise) {
         const fullExersice = await exercise.populate('user')
         const { description, duration, date, user: { username, _id } } = fullExersice
-        return { description, duration,date, username, _id }
+        return { description, duration, date, username, _id }
     }
 }
 
