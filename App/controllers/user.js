@@ -52,7 +52,9 @@ class UserController {
                 { path: 'count', options: { limit: req.query.limit }, match }
             ])
             const { username, count, _id, log } = user
-            res.json({ username, count, _id, log })
+            res.json({ username, count, _id, log:log.map(item=>{
+                return {...item._doc,date:new Date(item._doc.date).toDateString()}
+            }) })
         } catch (error) {
             console.log(chalk.bgRed(error))
         }
