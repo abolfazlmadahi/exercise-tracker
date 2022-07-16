@@ -40,8 +40,9 @@ class UserController {
     async logExercises(req, res) {
         try {
             const { from, to } = req.query
-            const match = {
-                date: {
+            const match = {}
+            if (from || to) {
+                match.date = {
                     ...from ? { $gte: new Date(from) } : {},
                     ...to ? { $lt: new Date(to) } : {}
                 }
