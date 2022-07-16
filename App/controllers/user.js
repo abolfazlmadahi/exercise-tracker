@@ -37,11 +37,21 @@ class UserController {
         }
     }
 
-    async logExercises(req,res){
+    async logExercises(req, res) {
         try {
-            const user=await User.findById(req.params._id).populate('log count')
-            const {username,count,_id,log}=user
-            res.json({username,count,_id,log})
+            const { from, to } = req.query
+            const match = {
+                date: {
+                    ...from ? { $gte: new Date(from) } : {},
+                    ...to ? { $lt: new Date(to) } : {}
+                }
+            }
+            const user = await User.findById(req.params._id).populate([
+                { path: 'log', options: { limit: req.query.limit }, match },
+                { path: 'count', options: { limit: req.query.limit }, match }
+            ])
+            const { username, count, _id, log } = user
+            res.json({ username, count, _id, log })
         } catch (error) {
             console.log(chalk.bgRed(error))
         }
